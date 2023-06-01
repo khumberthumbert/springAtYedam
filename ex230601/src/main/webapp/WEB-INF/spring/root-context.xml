@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:mybatis-spring="http://mybatis.org/schema/mybatis-spring"
+	xsi:schemaLocation="http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring-1.2.xsd
+http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<!-- datasource connection pool -->
+	<!-- HikariCP를 여기다가 적어줘야 동작함. 라이브러리를 등록했으면 필요한 BEAN이 무엇인지 파악해야함 -->
+	<bean id="hikariConfig" class="com.zaxxer.hikari.HikariConfig">
+		<property name="driverClassName"
+			value="oracle.jdbc.driver.OracleDriver" />
+		<property name="jdbcUrl"
+			value="jdbc:oracle:thin:@127.0.0.1:1521:xe" />
+		<property name="username" value="hr" />
+		<property name="password" value="hr" />
+	</bean>
+
+	<bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource"
+		destroy-method="close">
+		<constructor-arg ref="hikariConfig" />
+	</bean>
+
+	<!-- mybatis SqlSessionFactory 
+	mybatis를 동작시키는 클래스.  -->
+	<bean class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"/>
+	</bean>
+	
+	<!-- mapper scan -->
+	<!-- 어떤 패키지든 상관없으니까 기능별 하위 패키지를 모두 ~ -->
+	<mybatis-spring:scan base-package="com.yedam.app.**.mapper"/>
+
+</beans>
