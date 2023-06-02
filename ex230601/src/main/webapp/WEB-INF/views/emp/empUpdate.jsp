@@ -9,7 +9,7 @@
 </head>
 <body>
 <h3>사원수정</h3>
-<form action="empUpdate" method="post">
+<form action="empUpdate" method="post" name="frm">
 	employeeId<input name="employeeId" readonly="readonly" value="${emp.employeeId }"><br>
 	firstName<input name="firstName" value="${emp.firstName }"><br>
 	lname * <input name="lastName" value="${emp.lastName }"><br>
@@ -18,7 +18,10 @@
 		departmentId
 	<c:forEach items="${depts }" var="dept">
 		<input type="radio" name="departmentId" 
-		value="${dept.departmentId }">${dept.departmentName }
+		value="${dept.departmentId }" 
+		<c:if test="${dept.departmentId==emp.departmentId}">checked</c:if> > 
+		${dept.departmentName }
+		
 	</c:forEach><br>
 	
 	jobId *<select name="jobId">
@@ -29,5 +32,8 @@
 	</select><br>
 	<button>저장</button>
 </form>
+<script>
+  frm.jobId.value= "${emp.jobId}"
+</script>
 </body>
 </html>

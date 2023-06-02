@@ -67,4 +67,12 @@ public class EmpController {
 		return "emp/empUpdate";
 	}
 	
+	//사원수정 처리
+		@PostMapping("empUpdate")
+		public String empUpdate(EmpVO vo) {
+			empMapper.updateEmp(vo);
+			return "redirect:empList"; //forward redirect 아무것도 안적었을 때 forward
+			// return empList는 mapping url을 적어주는 거임
+		}
+	
 }
