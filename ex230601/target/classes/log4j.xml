@@ -31,10 +31,24 @@
 	<logger name="org.springframework.web">
 		<level value="info" />
 	</logger>
+	
+<!-- trace, debug, info, warn, error, fetal  -->
+	<logger name="jdbc.audit">
+		<level value="warn" />
+	</logger>
 
-	<!-- Root Logger -->
+	<logger name="jdbc.resultset">
+		<level value="warn" />
+	</logger>
+
+	<logger name="jdbc.connection">
+		<level value="warn" />
+	</logger>
+
+	<!-- Root Logger 
+	Root는 항상 맨 마지막에. -->
 	<root>
-		<priority value="warn" />
+		<priority value="info" />
 		<appender-ref ref="console" />
 	</root>
 	

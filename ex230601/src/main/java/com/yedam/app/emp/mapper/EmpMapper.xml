@@ -3,11 +3,117 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
  <mapper namespace="com.yedam.app.emp.mapper.EmpMapper">
- 	<select id="selectOne" resultType="com.yedam.app.emp.service.EmpVO">
+ 	<sql id="empWhere">
+ 		<where>
+			<if test="departmentId != null and departmentId != '' ">
+			 AND department_id in 
+			 <foreach open="(" close=")" 
+			 collection="deptArr" item="dept" separator=",">
+			 	#{dept}
+			 </foreach>
+			</if>
+			<if test="firstName != null and firstName != '' ">
+			 AND first_name like '%${firstName}%'
+			</if>
+		</where>
+ 	</sql>
+ 	
+ 	
+ 	<insert id="insertEmp" parameterType="EmpVO">
+ 		<selectKey keyProperty="employeeId" resultType="String" order="BEFORE">
+ 		
+ 		  select max(employee_id) + 1 
+ 		  from employees
+ 		</selectKey>
+ 	 insert into employees
+ 	 (EMPLOYEE_ID, LAST_NAME, first_name, EMAIL, HIRE_DATE, JOB_ID, department_id) 
+ 	 values(
+ 	<!-- employees_seq.nextval, -->
+ 	#{employeeId},
+	#{firstName},
+	#{lastName},
+	#{email},
+	#{hireDate},
+	#{jobId},
+	#{departmentId})
+ 	</insert>
+ 	
+ 	<update id="updateEmp">
+ 		UPDATE EMPLOYEES SET
+ 		       FIRST_NAME = #{firstName},
+ 		       LAST_NAME = #{lastName},
+ 		       EMAIL = #{email},
+ 		       HIRE_DATE = #{hireDate}
+ 		WHERE EMPLOYEE_ID = #{employeeId}
+ 	</update>
+ 	
+ 	
+ 	<delete id="deleteEmp">
+	 	DELETE FROM EMPLOYEES
+	 	WHERE EMPLOYEE_ID = #{employeeId}
+ 	</delete>
+ 	
+ 	
+ 	<select id="selectCount" resultType="int">
+ 		select count(*) from employees
+ 		<include refid="empWhere"></include>
+ 	</select>
+ 	
+ 	
+ 	<select id="selectList" resultType="EmpVO">
  		SELECT employee_id,
  			   first_name,
- 			   last_name
-		FROM employees
+ 			   last_name,
+ 			   email,
+ 			   PHONE_NUMBER,
+ 			   TO_CHAR(HIRE_DATE,'yyyy-mm-dd') HIRE_DATE,
+ 			   JOB_ID,
+ 			   SALARY,
+ 			   COMMISSION_PCT,
+ 			   MANAGER_ID,
+ 			   department_id
+		FROM   employees
+		<include refid="empWhere"></include>
+		
+		<choose>
+			<when test="orderColumn != null and orderColumn != '' ">
+	         ORDER  BY ${orderColumn}
+			</when>
+			<otherwise>
+	         ORDER BY EMPLOYEE_ID
+			</otherwise>
+		</choose>
+ 	</select>
+ 	
+ 	<select id="selectOne" parameterType="int" resultType="EmpVO">
+ 		SELECT employee_id,
+ 			   first_name,
+ 			   last_name,
+ 			   email,
+ 			   PHONE_NUMBER,
+ 			   TO_CHAR(HIRE_DATE,'yyyy-mm-dd') HIRE_DATE,
+ 			   JOB_ID,
+ 			   SALARY,
+ 			   COMMISSION_PCT,
+ 			   MANAGER_ID,
+ 			   department_id
+		FROM   employees
 		WHERE employee_id = #{empNo}
  	</select>
+ 	
+ 	<!-- id가 키 값으로 들어감. -->
+ 	<select id="selectJobs" resultType="map">
+ 		SELECT JOB_ID "jobId",
+ 			   JOB_TITLE "jobTitle"
+ 		FROM   JOBS
+ 	  ORDER BY JOB_TITLE
+ 	</select>
+ 	
+ 	<select id="selectDepartments" resultType="map">
+ 		SELECT DEPARTMENT_ID "departmentId",
+ 			   DEPARTMENT_NAME "departmentName"
+ 		FROM   DEPARTMENTS
+ 	  ORDER BY department_id
+ 	</select>
+ 	
  </mapper>
