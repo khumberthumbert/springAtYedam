@@ -20,7 +20,7 @@
 		value="${dept.departmentId }">${dept.departmentName }
 	</c:forEach>
 	
-	DepartmentId *<select name="departmentId">
+	DepartmentName * <select name="departmentName">
 	<option value="">--선택--</option>
 	<c:forEach items="${depts}" var="job">
 		<option value="${job.jobId}">${job.jobTitle}</option>
