@@ -25,8 +25,9 @@
 				<security:authentication-provider>
 					<security:user-service>
 					<!-- 세션에서 로그아웃하면 세션 처리 했던 것들 시큐리티에서 해줌,. -->
-					<security:user name="user" password="1234" authorities="ROLE_USER"/>
-				<security:user name="admin" password="1234" authorities="ROLE_ADMIN"/>
+					<!-- 중요한 것은 authorities. 권한. -->
+					<security:user name="user" password="{noop}1234" authorities="ROLE_USER"/>
+				<security:user name="admin" password="{noop}1234" authorities="ROLE_ADMIN"/>
 			</security:user-service>
 		</security:authentication-provider>
 	</security:authentication-manager>
