@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <mapper namespace="com.yedam.app.board.mapper.BoardMapper">
+  		<!-- 전체조회 -->
+  		<select id="selectBoardList" resultType="BoardVO">
+  			select BNO, 
+  				   TITLE, 
+  				   CONTENTS, 
+  				   WRITER, 
+  				   REGDATE, 
+  				   UPDATEDATE, 
+  				   IMAGE
+  			from board
+  			<!-- 정렬기준 없으면 안된다. -->
+  			ORDER BY bno
+  		</select>
+  		<!-- 단건조회  조건 1) 글번호 2) 작가-->
+  		<select id="selectBoardInfo" resultType="BoardVO">
+  			select BNO, 
+  				   title, 
+  				   contents, 
+  				   WRITER, 
+  				   REGDATE, 
+  				   UPDATEDATE, 
+  				   IMAGE
+  			from board
+  			<where>
+  			<!-- 무조건 들어가는 부분을 if문에 넣기. -->
+  				<if test="writer != null and !writer.equalse('')">
+  					writer = #{writer} AND
+  				</if>
+  				bno = #{bno}
+  			</where>
+  		</select>
+  		
+  		<!--  등록 : 필수와 옵션-->
+  		<insert id="insertBoard" parameterType="BoardVO">
+  			<selectKey keyProperty="bno"
+  						resultType="int"
+  						order="BEFORE">
+  				SELECT NVL(MAX(bno), 0) +1
+  				FROM board
+  			</selectKey>
+  			insert into board (
+  							   <!-- 필수적인 부분은 이렇게. -->
+  							  bno
+  							  ,title
+  							  ,contents
+  							  ,writer
+  							  <if test="image != null and !image.equals('')">
+  							  , image
+  							  </if>
+  							  		)
+  							  VALUES (
+  							   #{bno}
+  							   ,#{title}
+  							   ,#{contents}
+  							   ,#{writer}
+  							   <if test="image != null and !image.equals('')">
+  							   ,#{image}
+  							   </if>
+  							  )
+  		</insert>
+  		
+  		<!-- 수정 : 대상 ( 제목, 내용, 이미지, 수정날짜(반드시) ) -->
+  		<update id="updateBoard" parameterType="BoardVO">
+  			UPDATE board
+	  		<set>
+	  			<if test="title != null and !title.equals('')">
+	  				TITLE = #{title},
+	  			</if>
+	  			<if test="contents != null and !contents.equals('')">
+	  				CONTENTS = #{contents},
+	  			</if>
+	  			<if test="image != null and !image.equals('')">
+	  				IMAGE = #{image},
+	  			</if>
+	  			<if test="regdate != null and !regdate('')">
+	  				UPDATEDATE = TO_DATE(#{updatedate}, YYYY/MM/DD HH:M)
+	  			</if>
+	  			<if test="updatedate != null">
+	  				UPDATEDATE = #{updatedate}
+	  			</if>
+	  			<if test="updatedate == null">
+	  				UPDATEDATE = sysdate
+	  			</if>
+	  		</set>
+	  		WHERE bno = #{bno}
+  		</update>
+  		<!-- 삭제 (글번호 기준으로 삭제)-->
+  		<delete id="deleteBoard" parameterType="BoardVO">
+  		Delete from board
+  		where bno = #{bno}
+  		</delete>
+  </mapper>
