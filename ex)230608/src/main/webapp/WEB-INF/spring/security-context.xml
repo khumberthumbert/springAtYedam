@@ -19,16 +19,26 @@
 		<security:intercept-url pattern="/**" access="isAuthenticated()"/>
 		<security:form-login default-target-url="/top.jsp"/>
 		<security:logout logout-url="/logout" logout-success-url="/top.jsp"/>
-		<security:csrf disabled="true"/>
+		<!-- <security:csrf disabled="true"/> -->
 	</security:http>
+	
+	<bean id="userDetailService" class="com.yedam.app.user.service.CustomerUserDetailsService"/>
+	<!-- 밑에있는애가 위에 있는 애 참고할꺼니까 빈등록이 위에 있어야 함. -->
 			<security:authentication-manager>
-				<security:authentication-provider>
-					<security:user-service>
-					<!-- 세션에서 로그아웃하면 세션 처리 했던 것들 시큐리티에서 해줌,. -->
-					<!-- 중요한 것은 authorities. 권한. -->
-					<security:user name="user" password="{noop}1234" authorities="ROLE_USER"/>
-				<security:user name="admin" password="{noop}1234" authorities="ROLE_ADMIN"/>
-			</security:user-service>
+				<security:authentication-provider user-service-ref="userDetailService">
+				<!-- 마이바티스랑 연결된 거 아니고 히카리CP랑 연결되어 있다. -->
+				<!-- <security:jdbc-user-service data-source-ref="dataSource" 
+					users-by-username-query="SELECT login_id, '{noop}'||password, 1 
+											 FROM t_user
+											 WHERE login_id = ?"
+											 
+				   authorities-by-username-query="SELECT login_id, role_name
+				   								 FROM t_user JOIN t_user_role
+				   								   ON t_user.id = t_user_role.user_id
+				   								   			  JOIN t_role
+	   								   			   ON t_user_role.role_id = t_role.id
+	   								   			WHERE login_id = ?"
+				/> -->
 		</security:authentication-provider>
 	</security:authentication-manager>
 
